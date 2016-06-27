@@ -10,13 +10,15 @@ loc_train = "data.csv/data_lem_tags_train.csv"
 loc_test = "data.csv/data_lem_tags_test.csv"
 loc_submission = "data.csv/kaggle.forest.submission.csv"
 
-df_train = pd.read_csv(loc_train, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.bool, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object})
-df_test = pd.read_csv(loc_test, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.bool, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object})
+df_train = pd.read_csv(loc_train, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.bool, "conversion1":pd.np.bool, "conversion2":pd.np.bool, "conversion3":pd.np.bool, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object})
+df_test = pd.read_csv(loc_test, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.object, "conversion1":pd.np.bool, "conversion2":pd.np.object, "conversion3":pd.np.object, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object}, na_values=["False"])
 
 print(df_train.dtypes)
 print(df_test.dtypes)
 
-feature_cols = [col for col in df_train.columns if col not in ['lemmatized','id', 'conversion', 'tags', 'city', 'other']]
+#feature_cols = [col for col in df_train.columns if col not in ['lemmatized','id', 'conversion', 'tags', 'city', 'other']]
+feature_cols = [col for col in df_train.columns if col not in ['lemmatized','id', 'conversion', 'conversion1','conversion2', 'conversion3', 'tags']]
+print(feature_cols)
 
 #le = preprocessing.LabelEncoder()
 
@@ -54,18 +56,24 @@ df_test = MultiColumnLabelEncoder(columns = feature_cols).fit_transform(df_test)
 X_train = df_train[feature_cols]
 X_test = df_test[feature_cols]
 
-y = df_train['conversion']
+y = df_train['conversion3']
 test_ids = df_test['id']
 
-clf = ensemble.RandomForestClassifier(n_estimators=1000, n_jobs=-1, verbose=2)
+clf = ensemble.RandomForestClassifier(n_estimators=500, n_jobs=-1, verbose=2)
 clf.fit(X_train, y)
 
-z = df_test['conversion']
+df_test = pd.read_csv(loc_test, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.object, "conversion1":pd.np.bool, "conversion2":pd.np.object, "conversion3":pd.np.object, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object}, na_values=["False"])
+
+feature_cols = [col for col in df_train.columns]
+df_test = MultiColumnLabelEncoder(columns = feature_cols).fit_transform(df_test)
+
+z = df_test['conversion3']
 
 with open(loc_submission, "wb") as outfile:
-	outfile.write("id,conversion\n")
+	outfile.write("id,conversion,real\n")
 	for e, val in enumerate(list(clf.predict(X_test))):
-		outfile.write("%s,%s\n"%(test_ids[e],val))
+		outfile.write("%s,%s,%s\n"%(test_ids[e],val,z[e]))
 
 print(clf.score(X_test, z))
 print(clf.feature_importances_)
+print(feature_cols)

@@ -28,7 +28,7 @@ facets = ['acm', 'action', 'agregator', 'amn', 'city', 'contacts', 'date', 'geo'
 with open('data.csv/data_lem.csv') as data_file:
 	reader = csv.DictReader(data_file, doublequote=False, escapechar='\\')
 	with open('data.csv/data_lem_tags.csv', 'w') as out_file:
-		fieldnames = ['lemmatized', 'id', 'conversion', 'tags', 'acm', 'action', 'agregator', 'amn', 'city', 'contacts', 'date', 'geo', 'poi', 'price', 'stars', 'time', 'wh', 'other']
+		fieldnames = ['lemmatized', 'id', 'conversion', 'conversion1', 'conversion2', 'conversion3', 'tags', 'acm', 'action', 'agregator', 'amn', 'city', 'contacts', 'date', 'geo', 'poi', 'price', 'stars', 'time', 'wh', 'other']
 		writer = csv.DictWriter(out_file, fieldnames=fieldnames, doublequote=False, escapechar='\\')
 		writer.writeheader()
 
@@ -45,6 +45,9 @@ with open('data.csv/data_lem.csv') as data_file:
 				row_out['lemmatized'] = row['lemmatized']
 				row_out['id'] = row['id']
 				row_out['conversion'] = row['conversion']
+				row_out['conversion1'] = row['conversion1']
+				row_out['conversion2'] = row['conversion2']
+				row_out['conversion3'] = row['conversion3']
 				row_tags = []
 				for entry in tags_dict:
 					if entry in row['lemmatized']:

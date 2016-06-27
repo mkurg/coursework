@@ -18,6 +18,8 @@ print train.shape
 
 test = pd.read_csv('data.csv/data_lem_test.csv', header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False)
 
+print test.shape
+
 num_queries = train["lemmatized"].size
 clean_train_queries = []
 
