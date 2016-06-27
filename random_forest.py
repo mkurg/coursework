@@ -57,7 +57,7 @@ X_test = df_test[feature_cols]
 y = df_train['conversion']
 test_ids = df_test['id']
 
-clf = ensemble.RandomForestClassifier(n_estimators=500, n_jobs=-1, verbose=2)
+clf = ensemble.RandomForestClassifier(n_estimators=1000, n_jobs=-1, verbose=2)
 clf.fit(X_train, y)
 
 z = df_test['conversion']
@@ -68,3 +68,4 @@ with open(loc_submission, "wb") as outfile:
 		outfile.write("%s,%s\n"%(test_ids[e],val))
 
 print(clf.score(X_test, z))
+print(clf.feature_importances_)
