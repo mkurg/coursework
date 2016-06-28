@@ -5,6 +5,7 @@ import pandas as pd
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
+from sklearn.metrics import classification_report
 
 loc_train = "data.csv/data_lem_tags_train.csv"
 loc_test = "data.csv/data_lem_tags_test.csv"
@@ -59,7 +60,7 @@ X_test = df_test[feature_cols]
 y = df_train['conversion3']
 test_ids = df_test['id']
 
-clf = MultinomialNB(verbose=True)
+clf = MultinomialNB()
 clf.fit(X_train, y)
 
 df_test = pd.read_csv(loc_test, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.object, "conversion1":pd.np.bool, "conversion2":pd.np.object, "conversion3":pd.np.object, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object}, na_values=["False"])
@@ -67,12 +68,19 @@ df_test = pd.read_csv(loc_test, header=0, delimiter=",", doublequote=True, escap
 feature_cols = [col for col in df_train.columns]
 df_test = MultiColumnLabelEncoder(columns = feature_cols).fit_transform(df_test)
 
-z = df_test['conversion3']
+z = df_test['conversion']
+
+predictions = list(clf.predict(X_test))
 
 with open(loc_submission, "wb") as outfile:
 	outfile.write("id,conversion,real\n")
-	for e, val in enumerate(list(clf.predict(X_test))):
+	for e, val in enumerate(predictions):
 		outfile.write("%s,%s,%s\n"%(test_ids[e],val,z[e]))
 
 print(clf.score(X_test, z))
+#print(clf.feature_importances_)
 print(feature_cols)
+
+target_names = ['worked', 'not worked']
+
+print(classification_report(z, predictions, target_names=target_names))
