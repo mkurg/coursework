@@ -15,19 +15,19 @@ vectorizer = CountVectorizer(analyzer = "word",   \
                              max_features = None)
 classifier = RandomForestClassifier(n_estimators = 100) 
 
-train = pd.read_csv('data.csv/data_lem_train.csv', header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False)
+train = pd.read_csv('data.csv/data_lem_test.csv', header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False)
 
 print train.shape
 
-test = pd.read_csv('data.csv/data_lem_test.csv', header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False)
+test = pd.read_csv('data.csv/data_lem_train.csv', header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False)
 
 print test.shape
 
 num_queries = train["lemmatized"].size
 clean_train_queries = []
 
-x_train = train['lemmatized']
-y_train = train['conversion']
+x_train = train['lemmatized'][:50000]
+y_train = train['conversion'][:50000]
 
 x_test = test['lemmatized'].fillna('')
 y_test = test['conversion'].astype('bool')

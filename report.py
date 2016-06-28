@@ -4,7 +4,7 @@
 import pandas as pd
 from sklearn.metrics import classification_report
 
-data = pd.read_csv("data.csv/kaggle.forest.submission.csv", header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.bool, "real":pd.np.bool}, na_values=["False"])
+data = pd.read_csv("data.csv/kaggle.forest.submission-conv1.csv", header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.bool, "real":pd.np.bool}, na_values=["False"])
 
 y_true = data['real']
 y_pred = data['conversion']

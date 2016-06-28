@@ -7,12 +7,12 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report
 
-loc_train = "data.csv/data_lem_tags_train.csv"
-loc_test = "data.csv/data_lem_tags_test.csv"
+loc_train = "data.csv/data_lem_tags_train_bow.csv"
+loc_test = "data.csv/data_lem_tags_test_bow.csv"
 loc_submission = "data.csv/kaggle.forest.submission.csv"
 
-df_train = pd.read_csv(loc_train, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.bool, "conversion1":pd.np.bool, "conversion2":pd.np.bool, "conversion3":pd.np.bool, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object})
-df_test = pd.read_csv(loc_test, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.object, "conversion1":pd.np.bool, "conversion2":pd.np.object, "conversion3":pd.np.object, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object}, na_values=["False"])
+df_train = pd.read_csv(loc_train, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.bool, "conversion1":pd.np.bool, "conversion2":pd.np.bool, "conversion3":pd.np.bool, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object, "bag_of_words":pd.np.bool})
+df_test = pd.read_csv(loc_test, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.object, "conversion1":pd.np.bool, "conversion2":pd.np.object, "conversion3":pd.np.object, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object, "bag_of_words":pd.np.bool}, na_values=["False"])
 
 print(df_train.dtypes)
 print(df_test.dtypes)
@@ -63,7 +63,7 @@ test_ids = df_test['id']
 clf = svm.LinearSVC(max_iter=3000, verbose=True)
 clf.fit(X_train, y)
 
-df_test = pd.read_csv(loc_test, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.object, "conversion1":pd.np.bool, "conversion2":pd.np.object, "conversion3":pd.np.object, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object}, na_values=["False"])
+df_test = pd.read_csv(loc_test, header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False, dtype={"id":pd.np.int32, "conversion":pd.np.object, "conversion1":pd.np.bool, "conversion2":pd.np.object, "conversion3":pd.np.object, "tags":pd.np.object, "acm":pd.np.object, "action":pd.np.object, "agregator":pd.np.object, "amn":pd.np.object, "city":pd.np.object, "contacts":pd.np.object, "date":pd.np.object, "geo":pd.np.object, "poi":pd.np.object, "price":pd.np.object, "stars":pd.np.object, "time":pd.np.object, "wh":pd.np.object, "other":pd.np.object, "bag_of_words":pd.np.bool}, na_values=["False"])
 
 feature_cols = [col for col in df_train.columns]
 df_test = MultiColumnLabelEncoder(columns = feature_cols).fit_transform(df_test)
