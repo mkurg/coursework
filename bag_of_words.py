@@ -1,8 +1,10 @@
 #!/usr/bin/python
-# -*- coding: <encoding name> -*-
+# -*- coding: utf-8 -*-
 
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.pipeline import Pipeline
+from sklearn.metrics import classification_report
 import numpy as np
 import pandas as pd  
 
@@ -10,7 +12,8 @@ vectorizer = CountVectorizer(analyzer = "word",   \
                              tokenizer = None,    \
                              preprocessor = None, \
                              stop_words = None,   \
-                             max_features = None) 
+                             max_features = None)
+classifier = RandomForestClassifier(n_estimators = 100) 
 
 train = pd.read_csv('data.csv/data_lem_train.csv', header=0, delimiter=",", doublequote=True, escapechar='\\', quotechar='"', error_bad_lines=False)
 
@@ -23,36 +26,30 @@ print test.shape
 num_queries = train["lemmatized"].size
 clean_train_queries = []
 
-print "Cleaning and parsing the training set...\n"
+x_train = train['lemmatized']
+y_train = train['conversion']
 
-for i in xrange( 0, num_queries ):
-    if( (i+1)%1000 == 0 ):
-    	print "Query %d of %d\n" % ( i+1, num_queries )       
-	clean_train_queries.append( train["lemmatized"][i] )
+x_test = test['lemmatized'].fillna('')
+y_test = test['conversion'].astype('bool')
 
-train_data_features = vectorizer.fit_transform(clean_train_queries)
-train_data_features = train_data_features.toarray()
+print "Training...\n"
 
-print train_data_features.shape
+clf = Pipeline([
+    ('vctr', vectorizer),
+    ('clf', classifier)
+    ])
 
-forest = RandomForestClassifier(n_estimators = 100) 
-forest = forest.fit(train_data_features, train["conversion"] )
+clf.fit(x_train, y_train)
 
 print test.shape
 
 num_queries = len(test["lemmatized"])
 clean_test_queries = []
 
-print "Cleaning and parsing the test set...\n"
-for i in xrange(0,num_queries):
-	if((i+1) % 1000 == 0):
-		print "Query %d of %d\n" % (i+1, num_queries)
-	#clean_query = query_to_words(test["lemmatized"][i])
-	clean_test_queries.append(test["lemmatized"][i])
+print "Testing...\n"
 
-test_data_features = vectorizer.transform(clean_test_queries)
-test_data_features = test_data_features.toarray()
-
-result = forest.predict(test_data_features)
-output = pd.DataFrame( data={"id":test["id"], "conversion":result} )
+y_pred = clf.predict(x_test)
+output = pd.DataFrame( data={"id":test["id"], "conversion":y_pred} )
 output.to_csv( "Bag_of_Words_model.csv", index=False, quoting=3 )
+
+print classification_report(y_test, y_pred)
